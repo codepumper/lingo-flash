@@ -6,18 +6,25 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { saveFlashcardResult, getRandomFlashcards } from '@/lib/flashcards'
 import { AlertCircle, CheckCircle2, ChevronRight, Lightbulb, RefreshCw } from 'lucide-react'
+import { Flashcard } from '@/lib/flashcards'
 import confetti from 'canvas-confetti'
+
+type Feedback = {
+	correct: boolean
+	message: string
+} | null
 
 export function FlashcardDeck({ cards = [] }) {
 	const [currentIndex, setCurrentIndex] = useState(0)
 	const [answer, setAnswer] = useState('')
-	const [feedback, setFeedback] = useState(null)
+	const [feedback, setFeedback] = useState<Feedback>(null)
 	const [attempts, setAttempts] = useState(0)
 	const [isComplete, setIsComplete] = useState(cards.length === 0)
 	const [results, setResults] = useState({ correct: 0, incorrect: 0, totalAttempts: 0 })
-	const [practiceCards, setPracticeCards] = useState(cards)
+	const [practiceCards, setPracticeCards] = useState<Flashcard[]>([])
 	const [isLoading, setIsLoading] = useState(false)
-	const inputRef = useRef(null)
+	const inputRef = useRef<HTMLInputElement | null>(null)
+	
 
 	useEffect(() => {
 		// If no cards are provided, get random cards
@@ -52,6 +59,12 @@ export function FlashcardDeck({ cards = [] }) {
 		if (!answer.trim()) return
 
 		const currentCard = practiceCards[currentIndex]
+
+		if (!currentCard || !currentCard.back) {
+			console.error("Current card or its 'back' property is undefined.")
+			return
+		}
+
 		const correctAnswer = currentCard?.back.toLowerCase().trim()
 		const userAnswer = answer.toLowerCase().trim()
 
@@ -88,13 +101,11 @@ export function FlashcardDeck({ cards = [] }) {
 		}
 	}
 
-	const handleKeyDown = e => {
-		if (e.key === 'Enter') {
-			if (feedback && (feedback.correct || attempts >= 2)) {
+	const handleKeyDown = (e: React.KeyboardEvent) => {
+		if (e.key === "Enter") {
+		  	if (feedback && (feedback.correct || attempts >= 2)) {
 				handleNextCard()
-			} else {
-				checkAnswer()
-			}
+		  	}
 		}
 	}
 

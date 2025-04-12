@@ -2,8 +2,17 @@
 
 import { useEffect, useRef } from "react"
 
-export function StatsChart({ data = [] }) {
-  const canvasRef = useRef(null)
+type DataPoint = {
+  value: number,
+  day: string
+}
+
+type StatsChartProps = {
+  data: DataPoint[]
+}
+
+export default function StatsChart({ data }: StatsChartProps) {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
   useEffect(() => {
     if (!canvasRef.current || !data.length) return
@@ -14,6 +23,8 @@ export function StatsChart({ data = [] }) {
     // Set canvas dimensions
     canvas.width = canvas.offsetWidth
     canvas.height = canvas.offsetHeight
+
+    if (!ctx) return
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height)

@@ -19,9 +19,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getFlashcards, createFlashcard, deleteFlashcard } from "@/lib/flashcards"
 import AuthenticatedLayout from "@/components/authenticated-layout"
 import { BookOpen, Plus, Search, Trash2 } from "lucide-react"
+import { Flashcard } from "@/lib/flashcards"
 
 export default function FlashcardsPage() {
-  const [flashcards, setFlashcards] = useState([])
+  const [flashcards, setFlashcards] = useState<Flashcard[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
@@ -46,18 +47,18 @@ export default function FlashcardsPage() {
     loadFlashcards()
   }, [])
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target
     setNewCard({ ...newCard, [name]: value })
   }
 
-  const handleDirectionChange = (value) => {
+  const handleDirectionChange = (value: string) => {
     setNewCard({ ...newCard, direction: value })
   }
 
-  const handleAddCard = async (e) => {
+  const handleAddCard = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
+  
     try {
       const card = await createFlashcard(newCard.german, newCard.english, newCard.direction)
       if (card) {
@@ -70,7 +71,7 @@ export default function FlashcardsPage() {
     }
   }
 
-  const handleDeleteCard = async (id) => {
+  const handleDeleteCard = async (id: string) => {
     try {
       const success = await deleteFlashcard(id)
       if (success) {

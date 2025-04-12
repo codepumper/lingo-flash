@@ -10,10 +10,11 @@ import { Input } from '@/components/ui/input'
 import { getRandomFlashcards, saveFlashcardResult } from '@/lib/flashcards'
 import AuthenticatedLayout from '@/components/authenticated-layout'
 import { AlertCircle, CheckCircle2, ChevronRight, Lightbulb, RefreshCw, PenTool, BookOpen, Home } from 'lucide-react'
+import { Flashcard } from '@/lib/flashcards'
 import confetti from 'canvas-confetti'
 
 export default function PracticePage() {
-	const [cards, setCards] = useState([])
+	const [cards, setCards] = useState<Flashcard[]>([])
 	const [currentCardIndex, setCurrentCardIndex] = useState(0)
 	const [answer, setAnswer] = useState('')
 	const [feedback, setFeedback] = useState<null | { correct: boolean; message: string }>(null)
@@ -51,6 +52,12 @@ export default function PracticePage() {
 		if (!answer.trim()) return
 
 		const currentCard = cards[currentCardIndex]
+
+		if (!currentCard || !currentCard.back) {
+		console.error("Current card or its 'back' property is undefined.")
+		return
+		}
+		
 		const correctAnswer = currentCard.back.toLowerCase().trim()
 		const userAnswer = answer.toLowerCase().trim()
 
